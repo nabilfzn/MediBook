@@ -7,6 +7,12 @@ app = Flask(__name__)
 @app.route('/')
 def index():
     return render_template('index.html')
+@app.route('/chatmedi')
+def chatmedi():
+    return render_template('chatmedi.html')
+@app.route('/chatbook')
+def chatbook():
+    return render_template('chatbook.html')
 
 
 
