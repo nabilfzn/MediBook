@@ -1,13 +1,186 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <title>Chatbot Perpustakaan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* --- ALL STYLES HAVE BEEN UPDATED TO MATCH THE NEW UI --- */
+    #chat-box {
+      scrollbar-width: none; /* Firefox */
+    }
+    #chat-box::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Edge */
+    }
+    .user-bubble::after, .bot-bubble::after {
+      content: none;
+    }
+
+    /* CHANGE: User bubble is now white with black text */
+    .user-bubble {
+      border-radius: 28px 2px 28px 28px;
+      background: #FFFFFF; /* Changed from #EEE */
+      box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+      color: #B91C1C;
+    }
+    
+    /* CHANGE: Bot bubble is now dark red with a white border and white text */
+    .bot-bubble {
+      border-radius: 2px 28px 28px 28px;
+      border: 2px solid #FFFFFF; /* Changed border color */
+      box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+      background: #B91C1C; /* Added dark red background */
+      color: #FFFFFF; /* Added white text color */
+    }
+
+    #user-input::-webkit-scrollbar {
+      display: none;
+    }
+    #user-input {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
 </head>
-<body>
-    <h1>Chat medi</h1>
-    <a href="/">home</a>
-    <a href="/chatbook">chatbook</a>
+<body class="flex flex-col min-h-screen font-sans bg-[#C53030]">
+
+  <header class="flex justify-between items-center px-10 py-4 bg-[#FFF8F8] border-b border-gray-200">
+    <img src="{{ url_for('static', filename='img/medibook_logo.png') }}" alt="Logo Bot" class="h-10">
+    <nav>
+      <a href="/chatmedi" class="ml-6 font-medium text-black hover:text-blue-600">UKS</a>
+      <a href="/chatbook" class="ml-6 font-medium text-black hover:text-blue-600">Perpustakaan</a>
+    </nav>
+  </header>
+
+  <section id="hero" class="flex-1 flex flex-col justify-center items-center text-center px-5 py-16">
+    <h1 class="text-4xl md:text-6xl font-bold mb-5 leading-snug text-white">
+      Chatbot Cerdas untuk <br/> Pertanyaan Seputar UKS
+    </h1>
+    <p class="max-w-4xl text-red-100 text-lg leading-relaxed">
+      Chatbot Interaktif untuk menjawab semua pertanyaanmu seputar UKS SMK Telkom Sidoarjo.<br/>
+      Mulai dari cek ketersediaan obat, info peralatan P3K, hingga solusi cepat untuk keluhanmu di UKS!<br/>
+      Yuk, tanyakan di sini!
+    </p>
+  </section>
+
+  <div id="chat-container" class="flex-1 flex flex-col items-center px-5 py-5">
+    <div class="w-full max-w-3xl flex flex-col flex-1">
+      <div id="chat-box" class="flex-1 rounded-lg px-4 py-5 mb-4 overflow-y-auto space-y-3 hidden max-h-[50vh] bg-transparent relative pl-1 pr-1"></div>
+
+      <div id="input-area" class="flex items-center border-none rounded-2xl px-4 py-2 bg-white shadow-sm">
+        <textarea 
+          id="user-input"
+          placeholder="Tanyakan sesuatu tentang Perpustakaan!"
+          rows="1"
+          class="flex-1 resize-none border-none outline-none text-base px-2 py-1 leading-tight overflow-y-auto bg-white"
+        ></textarea>
+        <button id="send-btn" class="text-gray-500 text-lg ml-2">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="bg-[#FFF8F8] grid gap-6 px-10 py-8 md:grid-cols-3 text-sm">
+      <div class="flex flex-col items-start">
+        <img src="{{ url_for('static', filename='img/logo_telkom.png') }}" alt="Logo SMK" class="h-12 mb-3">
+        <b class="mb-2">Sekolah Menengah Kejuruan Telkom Sidoarjo</b>
+        <p class="mb-3"><b>Alamat:</b> Jl. Raya Pecantingan Sekardangan, Kabupaten Sidoarjo, Jawa Timur</p>
+        <div class="flex gap-3 mt-2">
+          <a href="https://www.instagram.com/smktelkomsda/">
+            <img src="{{ url_for('static', filename='img/Instagram.png') }}" alt="Instagram" class="h-8 hover:scale-110 transition-transform">
+          </a>
+          <a href="https://www.facebook.com/p/SMK-Telkom-Sidoarjo-100047190761645/">
+            <img src="{{ url_for('static', filename='img/Facebook.png') }}" alt="Facebook" class="h-8 hover:scale-110 transition-transform">
+          </a>
+          <a href="https://www.youtube.com/@smktelkomsidoarjo">
+            <img src="{{ url_for('static', filename='img/Youtube.png') }}" alt="YouTube" class="h-8 hover:scale-110 transition-transform">
+          </a>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2">Hubungi Kami</h3>
+        <p><a href="tel:031-99711858"><i class="fas fa-phone-alt mr-2"></i>031-99711858</a></p>
+        <p><a href="mailto:informasi@smtktelkom-sda.sch.id"><i class="fas fa-envelope mr-2"></i>informasi@smtktelkom-sda.sch.id</a></p>
+      </div>
+      <div>
+        <h3 class="font-semibold mb-2">Tentang Kami</h3>
+        <p>Chatbot Perpustakaan ini hadir untuk memudahkan akses informasi, layanan, dan koleksi buku bagi seluruh pengunjung.</p>
+      </div>
+    </div>
+    <div class="bg-[#FFF8F8] text-center py-3 text-xs">
+      <p>SKOMDA &copy; Copyright 2025. Last Updated. All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    let firstMessage = true;
+
+    async function sendMessage() {
+      const inputField = document.getElementById("user-input");
+      const message = inputField.value.trim();
+      if (!message) return;
+
+      if (firstMessage) {
+        document.getElementById("hero").classList.add("hidden");
+        document.getElementById("chat-box").classList.remove("hidden");
+        firstMessage = false;
+      }
+
+      const chatBox = document.getElementById("chat-box");
+
+      const userBubble = `<div class="flex justify-end"><div class="user-bubble text-[#B91C1C] px-4 py-3 max-w-[70%] break-words whitespace-pre-wrap">${message}</div></div>`;
+      chatBox.insertAdjacentHTML("beforeend", userBubble);
+
+      inputField.value = "";
+      inputField.style.height = "auto";
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Fix for the bot avatar visibility
+      const botAvatarFix = 'ml-14';
+
+      setTimeout(() => {
+        const botResponse = "oke, siap acc <br>terima kasih sudah bertanya!";
+        
+        // =======================================================
+        // CHANGE: Removed Tailwind classes `bg-white` and `text-black` 
+        // as they are now handled by the .bot-bubble CSS style.
+        // Also added the avatar visibility fix.
+        // =======================================================
+        const botBubble = `<div class="flex items-start relative mt-4 ${botAvatarFix}"><img src="{{ url_for('static', filename='img/medibook_bot.png') }}" class="absolute -left-14 top-1 h-10 w-10 object-cover rounded-full"><div class="bot-bubble px-4 py-3 max-w-[85%] break-words whitespace-pre-wrap">${botResponse}</div></div>`;
+
+        chatBox.insertAdjacentHTML("beforeend", botBubble);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 800);
+    }
+
+    const textarea = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+    const lineHeight = 24;
+    const maxRows = 5;
+
+    textarea.addEventListener("input", function () {
+      this.style.height = "auto";
+      const newHeight = this.scrollHeight;
+      const maxHeight = lineHeight * maxRows;
+
+      if (newHeight > maxHeight) {
+        this.style.height = maxHeight + "px";
+        this.style.overflowY = "auto";
+      } else {
+        this.style.height = newHeight + "px";
+        this.style.overflowY = "hidden";
+      }
+    });
+
+    textarea.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    sendBtn.addEventListener("click", sendMessage);
+  </script>
 </body>
 </html>
