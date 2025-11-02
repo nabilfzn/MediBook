@@ -1,12 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BookBot Perpustakaan</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:#fafafa; margin:0; }
+    .wrap { max-width: 800px; margin: 40px auto; background:#fff; border-radius:14px; box-shadow:0 6px 24px rgba(0,0,0,.06); overflow:hidden; }
+    header { padding:18px 20px; border-bottom:1px solid #eee; font-weight:600; }
+    .chat { padding:20px; min-height: 50vh; }
+    .msg { margin:12px 0; line-height:1.5 }
+    .me { text-align:right }
+    .bubble { display:inline-block; padding:10px 14px; border-radius:12px; background:#f1f5f9 }
+    .me .bubble { background:#DCFCE7 }
+    form { display:flex; gap:8px; padding:12px; border-top:1px solid #eee; background:#fff; position:sticky; bottom:0; }
+    input[type=text]{ flex:1; padding:12px 14px; border-radius:10px; border:1px solid #ddd; }
+    button { padding:12px 16px; border-radius:10px; border:0; background:#16a34a; color:#fff; font-weight:600; cursor:pointer }
+    button:disabled { opacity:.6; cursor:not-allowed }
+    .hint { color:#6b7280; font-size:14px; padding:0 20px 14px }
+  </style>
 </head>
 <body>
-    <h1><a href="/chatmedi">chatmedi</a></h1>
-    <h1><a href="/chatbook">chatbook</a></h1>
+  <div class="wrap">
+    <header>📚 BookBot Perpustakaan</header>
+    <div class="hint">Coba: “Aku lagi galau dan butuh bacaan ringan tentang persahabatan.”</div>
+    <div id="chat" class="chat"></div>
+    <form id="form">
+      <input id="inp" type="text" placeholder="Ceritakan apa yang ingin kamu baca & perasaanmu..." autocomplete="off" />
+      <button id="btn" type="submit">Kirim</button>
+    </form>
+  </div>
+  <script src="/static/app.js"></script>
 </body>
 </html>
