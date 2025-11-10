@@ -4,44 +4,27 @@
   <meta charset="UTF-8">
   <title>Chatbot Perpustakaan</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Icon -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <!-- Typography plugin agar markdown terlihat rapi -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.9/dist/typography.min.css">
+  
   <style>
-    /* Ganti seluruh isi <style> Anda dengan ini */
-    #chat-box {
-      scrollbar-width: none; /* Firefox */
-    }
-    #chat-box::-webkit-scrollbar {
-      display: none; /* Chrome, Safari, Edge */
-    }
-
-    /* Menghilangkan ekor bubble */
-    .user-bubble::after, .bot-bubble::after {
-      content: none;
-    }
-
-    /* Bentuk Bubble User yang Baru */
+    #chat-box { scrollbar-width: none; }
+    #chat-box::-webkit-scrollbar { display: none; }
+    .user-bubble::after, .bot-bubble::after { content: none; }
     .user-bubble {
       border-radius: 28px 2px 28px 28px;
       background: #EEE;
       box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
     }
-    
-    /* Bentuk Bubble Bot yang Baru */
     .bot-bubble {
       border-radius: 2px 28px 28px 28px;
       border: 2px solid #FFF8F8;
       box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
     }
-
-    /* Hilangkan scrollbar textarea */
-    #user-input::-webkit-scrollbar {
-      display: none;
-    }
-    #user-input {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    #user-input::-webkit-scrollbar { display: none; }
+    #user-input { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="flex flex-col min-h-screen font-sans">
@@ -55,7 +38,7 @@
     </nav>
   </header>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section id="hero" class="flex-1 flex flex-col justify-center items-center text-center px-5 py-16">
     <h1 class="text-4xl md:text-6xl font-bold mb-5 leading-snug">
       Chatbot Cerdas untuk <br/> Pertanyaan Seputar Perpustakaan
@@ -70,10 +53,8 @@
   <!-- Chat -->
   <div id="chat-container" class="flex-1 flex flex-col items-center px-5 py-5">
     <div class="w-full max-w-3xl flex flex-col flex-1">
-      <!-- Chatbox -->
       <div id="chat-box" class="flex-1 rounded-lg px-4 py-5 mb-4 overflow-y-auto space-y-3 hidden max-h-[50vh] bg-transparent relative pl-1 pr-1"></div>
 
-      <!-- Input -->
       <div id="input-area" class="flex items-center border border-gray-300 rounded-2xl px-4 py-2 bg-[#FFF8F8] shadow-sm">
         <textarea 
           id="user-input"
@@ -89,7 +70,6 @@
   <!-- Footer -->
   <footer>
     <div class="bg-[#FFF8F8] grid gap-6 px-10 py-8 md:grid-cols-3 text-sm">
-      <!-- Left Footer -->
       <div class="flex flex-col items-start">
         <img src="{{ url_for('static', filename='img/logo_telkom.png') }}" alt="Logo SMK" class="h-12 mb-3">
         <b class="mb-2">Sekolah Menengah Kejuruan Telkom Sidoarjo</b>
@@ -106,13 +86,11 @@
           </a>
         </div>
       </div>
-      <!-- Center Footer -->
       <div>
         <h3 class="font-semibold mb-2">Hubungi Kami</h3>
         <p><a href="tel:031-99711858"><i class="fas fa-phone-alt mr-2"></i>031-99711858</a></p>
         <p><a href="mailto:informasi@smtktelkom-sda.sch.id"><i class="fas fa-envelope mr-2"></i>informasi@smtktelkom-sda.sch.id</a></p>
       </div>
-      <!-- Right Footer -->
       <div>
         <h3 class="font-semibold mb-2">Tentang Kami</h3>
         <p>Chatbot Perpustakaan ini hadir untuk memudahkan akses informasi, layanan, dan koleksi buku bagi seluruh pengunjung.</p>
@@ -124,73 +102,96 @@
   </footer>
 
   <script>
-   let firstMessage = true;
+    let firstMessage = true;
 
-   async function sendMessage() {
-     const inputField = document.getElementById("user-input");
-     const message = inputField.value.trim();
-     if (!message) return;
+    async function sendMessage() {
+      const inputField = document.getElementById("user-input");
+      const chatBox = document.getElementById("chat-box");
+      const message = inputField.value.trim();
+      if (!message) return;
 
-     if (firstMessage) {
-       document.getElementById("hero").classList.add("hidden");
-       document.getElementById("chat-box").classList.remove("hidden");
-       firstMessage = false;
-     }
+      // Awal chat
+      if (firstMessage) {
+        document.getElementById("hero").classList.add("hidden");
+        chatBox.classList.remove("hidden");
+        firstMessage = false;
+      }
 
-     const chatBox = document.getElementById("chat-box");
-     
-     // Bubble user (no changes here)
-     const userBubble = `<div class="flex justify-end"><div class="user-bubble text-black px-4 py-3 max-w-[70%] break-words whitespace-pre-wrap">${message}</div></div>`;
-     chatBox.insertAdjacentHTML("beforeend", userBubble);
+      // Tambahkan bubble user
+      chatBox.insertAdjacentHTML("beforeend", `
+        <div class="flex justify-end">
+          <div class="user-bubble text-black px-4 py-3 max-w-[70%] break-words whitespace-pre-wrap">${message}</div>
+        </div>
+      `);
+      inputField.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
 
-     inputField.value = "";
-     inputField.style.height = "auto";
-     chatBox.scrollTop = chatBox.scrollHeight;
+      // Tambahkan loading sementara bot
+      const loadingId = "bot-loading-" + Date.now();
+      chatBox.insertAdjacentHTML("beforeend", `
+        <div id="${loadingId}" class="flex items-start relative mt-4 ml-14">
+          <img src="{{ url_for('static', filename='img/medibook_bot.png') }}" class="absolute -left-14 top-1 h-10 w-10 object-cover rounded-full">
+          <div class="bot-bubble bg-white text-black px-4 py-3 max-w-[85%] italic text-gray-500">Sedang mengetik...</div>
+        </div>
+      `);
+      chatBox.scrollTop = chatBox.scrollHeight;
 
-     setTimeout(() => {
-       const botResponse = "oke, siap acc <br>terima kasih sudah bertanya!";
-       
-       // =======================================================
-       // THE FIX IS HERE: Added ml-14 to the container div
-       // =======================================================
-       const botBubble = `<div class="flex items-start relative mt-4 ml-14"><img src="{{ url_for('static', filename='img/medibook_bot.png') }}" class="absolute -left-14 top-1 h-10 w-10 object-cover rounded-full"><div class="bot-bubble bg-white text-black px-4 py-3 max-w-[85%] break-words whitespace-pre-wrap">${botResponse}</div></div>`;
-       // =======================================================
+      // Kirim ke Flask backend
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pesan: message })
+        });
 
-       chatBox.insertAdjacentHTML("beforeend", botBubble);
-       chatBox.scrollTop = chatBox.scrollHeight;
-     }, 800);
+        const data = await response.json();
+        const botText = data.respon || "Maaf, sistem sedang sibuk.";
 
-     /* Kode backend dinonaktifkan */
-   }
+        // Ubah markdown ke HTML
+        const botHTML = marked.parse(botText);
 
-   // Sisa kode JavaScript lainnya tetap sama...
-   const textarea = document.getElementById("user-input");
-   const sendBtn = document.getElementById("send-btn");
-   const lineHeight = 24;
-   const maxRows = 5;
+        // Hapus loading & tampilkan balasan bot
+        document.getElementById(loadingId).remove();
+        chatBox.insertAdjacentHTML("beforeend", `
+          <div class="flex items-start relative mt-4 ml-14">
+            <img src="{{ url_for('static', filename='img/medibook_bot.png') }}" class="absolute -left-14 top-1 h-10 w-10 object-cover rounded-full">
+            <div class="bot-bubble bg-white text-black px-4 py-3 max-w-[85%] prose prose-sm break-words">${botHTML}</div>
+          </div>
+        `);
+        chatBox.scrollTop = chatBox.scrollHeight;
 
-   textarea.addEventListener("input", function () {
-     this.style.height = "auto";
-     const newHeight = this.scrollHeight;
-     const maxHeight = lineHeight * maxRows;
+      } catch (error) {
+        document.getElementById(loadingId).remove();
+        chatBox.insertAdjacentHTML("beforeend", `
+          <div class="flex items-start relative mt-4 ml-14">
+            <div class="bot-bubble bg-white text-black px-4 py-3 max-w-[85%] break-words whitespace-pre-wrap">
+              Maaf, server sedang tidak bisa diakses.
+            </div>
+          </div>
+        `);
+      }
+    }
 
-     if (newHeight > maxHeight) {
-       this.style.height = maxHeight + "px";
-       this.style.overflowY = "auto";
-     } else {
-       this.style.height = newHeight + "px";
-       this.style.overflowY = "hidden";
-     }
-   });
+    // Textarea auto height
+    const textarea = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+    const lineHeight = 24, maxRows = 5;
 
-   textarea.addEventListener("keydown", function (e) {
-     if (e.key === "Enter" && !e.shiftKey) {
-       e.preventDefault();
-       sendMessage();
-     }
-   });
+    textarea.addEventListener("input", function () {
+      this.style.height = "auto";
+      const newHeight = this.scrollHeight;
+      const maxHeight = lineHeight * maxRows;
+      this.style.height = Math.min(newHeight, maxHeight) + "px";
+      this.style.overflowY = newHeight > maxHeight ? "auto" : "hidden";
+    });
 
-   sendBtn.addEventListener("click", sendMessage);
- </script>
+    textarea.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+    sendBtn.addEventListener("click", sendMessage);
+  </script>
 </body>
 </html>

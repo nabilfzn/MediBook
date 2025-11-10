@@ -1,0 +1,30 @@
+obat,deskripsi,ketersediaan,gejala
+Paracetamol,obat penurun demam dan pereda nyeri ringan seperti sakit kepala dan nyeri otot,YA,demam;sakit kepala;nyeri ringan
+Ibuprofen,obat antiinflamasi untuk mengurangi nyeri peradangan dan demam,YA,nyeri otot;nyeri haid;demam;nyeri sendi
+Antasida,obat untuk mengurangi rasa perih akibat asam lambung berlebih atau maag,YA,maag;nyeri ulu hati;mual
+Oralit,larutan untuk menggantikan cairan tubuh saat dehidrasi ringan karena diare atau muntah,YA,diare;dehidrasi;muntah
+Betadine,obat luar antiseptik untuk membersihkan luka agar tidak infeksi,YA,luka kecil;luka gores;luka berdarah
+Kapas,alat medis untuk membersihkan luka atau meneteskan obat cair,YA,luka;perawatan;antiseptik
+Plester,alat penutup luka kecil agar tidak terkena debu atau kotoran,YA,luka kecil;lecet;tergores
+Minyak Kayu Putih,minyak untuk menghangatkan tubuh dan meredakan masuk angin atau perut kembung,YA,masuk angin;perut kembung;pusing
+Minyak Telon,minyak hangat ringan untuk bayi atau anak kecil,YA,masuk angin;perut kembung;nyeri perut ringan
+Obat Batuk OB Herbal,obat herbal untuk meredakan batuk berdahak ringan,YA,batuk;radang tenggorokan
+Obat Flu Degirol,obat hisap antiseptik untuk tenggorokan yang sakit atau gatal,YA,sakit tenggorokan;flu;batuk kering
+Povidone Iodine,obat antiseptik cair untuk luka gores,YA,luka kecil;luka sayat
+Hand Sanitizer,cairan antiseptik untuk membunuh kuman di tangan tanpa air,YA,kebersihan;perlindungan diri
+Kompres Dingin,alat bantu untuk menurunkan panas atau bengkak akibat cedera,YA,demam;bengkak;cedera ringan
+Kompres Hangat,alat bantu untuk meredakan nyeri otot atau kram,YA,nyeri otot;kram;tegang otot
+Kain Kasa,alat medis untuk membalut luka agar tetap bersih,YA,luka kecil;luka berdarah
+Hansaplast,plester luka kecil praktis untuk melindungi luka,YA,luka kecil;lecet;tergores
+Obat Maag Promag,obat untuk mengatasi perih di lambung akibat asam lambung berlebih,YA,maag;perih perut;mual
+Salep Luka Bioplacenton,salep untuk mempercepat penyembuhan luka ringan,YA,luka kecil;luka gores;lecet
+Salep Gatal Kalpanax,salep untuk mengatasi gatal akibat jamur atau biang keringat,YA,gatal;jamur;biang keringat
+Obat Nyamuk Oles,krim untuk mencegah gigitan nyamuk,YA,gigitan nyamuk;gatal
+Kapas Alkohol,kapas steril yang dibasahi alkohol untuk membersihkan area sebelum diobati,YA,luka;sterilisasi;perawatan
+Obat Sakit Kepala Bodrex,obat untuk mengatasi sakit kepala dan nyeri ringan,YA,sakit kepala;demam;nyeri ringan
+Obat Luka Merah (Rivanol),antiseptik cair untuk luka kecil dan lecet,YA,luka kecil;lecet;tergores
+Vitamin C,vitamin untuk menjaga daya tahan tubuh,YA,lelah;imun lemah;sariawan
+Minyak Tawon,minyak gosok untuk nyeri otot dan keseleo ringan,YA,nyeri otot;keseleo;pegal
+Koyo Panas,plester hangat untuk meredakan nyeri otot dan punggung,YA,nyeri otot;pegal;capek
+Cutton Bud,alat pembersih telinga atau luka kecil,YA,kebersihan;perawatan luka
+Obat Sariawan Aloclair,gel untuk meredakan nyeri akibat sariawan,YA,sariawan;nyeri mulut

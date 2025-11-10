@@ -1,88 +1,162 @@
-# app.py
-import os
 from flask import Flask, request, jsonify, render_template
-from dotenv import load_dotenv
+import pandas as pd
 import google.generativeai as genai
-from recomender import BookRecommender
+import os
+from dotenv import load_dotenv
 
+app = Flask(__name__)
+
+# --- Load .env dan API Key Gemini ---
 load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  # pastikan di .env, bukan langsung di code
 
-# CSV_PATH = os.getenv("BOOKS_CSV_PATH", "data/data.csv")
-CSV_PATH = "data/data.csv"
-CHAT_MODEL = os.getenv("GEMINI_CHAT_MODEL", "gemini-1.5-flash")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# --- Baca data buku dan data UKS ---
+df_book = pd.read_csv("data/Book22.csv")
+df_book['mood'] = df_book['mood'].apply(lambda x: [m.strip().lower() for m in str(x).split(';')])
 
-genai.configure(api_key=GEMINI_API_KEY)
+df_uks = pd.read_csv("data/uks.csv")
+df_uks['gejala'] = df_uks['gejala'].apply(lambda x: [g.strip().lower() for g in str(x).split(';')])
 
-app = Flask(__name__, template_folder="templates", static_folder="static")
-reco = BookRecommender(CSV_PATH)
-model = genai.GenerativeModel(CHAT_MODEL)
 
-SYSTEM_PROMPT = (
-    "Kamu adalah asisten perpustakaan. "
-    "Tugasmu: beri rekomendasi buku secara empatik dan natural dalam Bahasa Indonesia. "
-    "Kamu hanya menerima judul dan status ketersediaan; boleh gunakan pengetahuan umum tentang judul, "
-    "tapi jangan mengarang detail spesifik yang tidak umum/keliru. "
-    "Tampilkan 3–5 rekomendasi, utamakan yang tersedia. "
-    "Format singkat: judul (status), lalu satu kalimat alasan relevansinya. "
-    "Akhiri dengan satu pertanyaan tindak lanjut."
-)
+# ====================== RENDER TEMPLATE =======================
+@app.route("/chatbook")
+def chatbook():
+    return render_template("chatbook.html")
 
-@app.route("/")
+@app.route("/chatmedi")
+def chatmedi():
+    return render_template("chatmedi.html")
+
+@app.route('/')
 def home():
-    return render_template("index.html")
+    return """
+    <h2>Chat Buku & Chat Medis (Gemini)</h2>
+    <ul>
+      <li><a href='/chatbook'>Chat Buku</a></li>
+      <li><a href='/chatmedi'>Chat UKS</a></li>
+    </ul>
+    """
 
-@app.route("/chat", methods=["POST"])
-def chat():
-    data = request.get_json(force=True)
-    user_text = (data.get("message") or "").strip()
-    if not user_text:
-        return jsonify({"reply": "Ceritakan topik yang ingin kamu baca dan bagaimana perasaanmu sekarang 😊"})
 
-    candidates = reco.search(user_text, top_k=8, boost_availability=True)
-    books_block = "\n".join([f"- {c['title']} (tersedia: {c['available']})" for c in candidates])
+# ====================== CHAT BUKU =======================
+def rekomendasi_buku(mood):
+    hasil = df_book[df_book['mood'].apply(lambda ms: mood.lower() in ms)]
+    if hasil.empty:
+        hasil = df_book[df_book['mood'].apply(lambda ms: any(mood.lower() in m for m in ms))]
+    return hasil.head(3).to_dict(orient='records')
 
-    user_prompt = f"""
-{SYSTEM_PROMPT}
 
-Pengguna berkata: "{user_text}"
-
-Daftar kandidat buku (judul + ketersediaan):
-{books_block}
-
-Instruksi:
-1) Pilih 3–5 judul paling relevan dengan topik/perasaan pengguna.
-2) Utamakan yang tersedia (YA). Jika ada yang TIDAK, boleh jadi alternatif cadangan di akhir.
-3) Untuk tiap judul, tuliskan 1 kalimat alasan singkat & natural (hindari detail spesifik yang tidak umum).
-4) Bahasa hangat & ringkas.
-5) Tutup dengan 1 pertanyaan tindak lanjut.
-"""
+@app.route('/chat', methods=['POST'])
+def chat_book():
+    data = request.get_json()
+    user_input = data.get('pesan', '').strip()
+    if not user_input:
+        return jsonify({'error': 'pesan tidak boleh kosong'}), 400
 
     try:
-        resp = model.generate_content(user_prompt)
-        reply = (resp.text or "").strip()
-        if not reply:
-            raise ValueError("Empty response")
-    except Exception:
-        available_first = sorted(candidates, key=lambda x: x["available"] != "YA")
-        top = available_first[:4]
-        lines = [f"Berikut beberapa pilihan yang cocok menurutku:"]
-        for t in top:
-            avail = "Tersedia" if t["available"] == "YA" else "Tidak tersedia"
-            lines.append(f"- {t['title']} ({avail})")
-        lines.append("Kamu lebih suka bacaan ringan atau yang mendalam?")
-        reply = "\n".join(lines)
+        model = genai.GenerativeModel("gemini-2.0-flash")
 
-    return jsonify({"reply": reply, "candidates": candidates})
+        # --- Deteksi mood ---
+        mood_prompt = f"""
+        Kamu adalah analis emosi.
+        Dari kalimat berikut, tentukan satu kata mood utama (misal: senang, sedih, refleksi, marah, bahagia, motivasi, fokus, dll).
+        Kalimat: "{user_input}"
+        Jawab hanya satu kata.
+        """
+        mood_response = model.generate_content(mood_prompt)
+        mood = mood_response.text.strip().lower()
 
-@app.route("/refresh", methods=["POST"])
-def refresh():
-    try:
-        reco.refresh()
-        return jsonify({"ok": True, "count": len(reco.df)})
+        # --- Ambil rekomendasi buku ---
+        buku_list = rekomendasi_buku(mood)
+        if not buku_list:
+            return jsonify({
+                'respon': f"Aku paham kok, tapi sepertinya belum ada buku yang cocok dengan suasana '{mood}' kamu."
+            })
+
+        buku_str = "\n".join([f"- {b['Title']} ({b['available']})" for b in buku_list])
+
+        # --- Balasan empatik ---
+        final_prompt = f"""
+        Pesan pengguna: "{user_input}"
+        Mood pengguna: {mood}
+        Buku yang cocok:
+        {buku_str}
+
+        Buat jawaban empatik dan hangat seperti teman bicara, 
+        lalu sarankan buku-buku itu dengan cara alami. Jangan terlalu formal.
+        """
+        final_response = model.generate_content(final_prompt)
+
+        return jsonify({
+            'mood_terdeteksi': mood,
+            'respon': final_response.text
+        })
+
     except Exception as e:
-        return jsonify({"ok": False, "error": str(e)}), 500
+        return jsonify({'error': str(e)}), 500
 
-if __name__ == "__main__":
-    port = 5001
-    app.run(host="0.0.0.0", port=port, debug=True)
+
+# ====================== CHAT MEDICAL / UKS =======================
+def rekomendasi_obat(gejala):
+    hasil = df_uks[df_uks['gejala'].apply(lambda gs: gejala.lower() in gs)]
+    if hasil.empty:
+        hasil = df_uks[df_uks['gejala'].apply(lambda gs: any(gejala.lower() in g for g in gs))]
+    return hasil.head(3).to_dict(orient='records')
+
+
+@app.route('/chatmedi_api', methods=['POST'])
+def chat_medi():
+    data = request.get_json()
+    user_input = data.get('pesan', '').strip()
+    if not user_input:
+        return jsonify({'error': 'pesan tidak boleh kosong'}), 400
+
+    try:
+        model = genai.GenerativeModel("gemini-2.0-flash")
+
+        # --- Deteksi gejala utama dari curhatan pengguna ---
+        gejala_prompt = f"""
+        Kamu adalah asisten medis sekolah.
+        Dari kalimat berikut, tentukan gejala utama yang dirasakan pengguna 
+        (misalnya: pusing, demam, batuk, perut sakit, gatal, luka, stres, lemas, maag, dll).
+        Kalimat: "{user_input}"
+        Jawab hanya satu kata gejala tanpa penjelasan.
+        """
+        gejala_response = model.generate_content(gejala_prompt)
+        gejala = gejala_response.text.strip().lower()
+
+        # --- Rekomendasi obat berdasarkan gejala ---
+        obat_list = rekomendasi_obat(gejala)
+
+        if not obat_list:
+            return jsonify({
+                'respon': f"Aku paham kamu sedang merasa {gejala}, tapi sepertinya belum ada obat yang cocok di UKS untuk itu."
+            })
+
+        obat_str = "\n".join([f"- {o['obat']} ({o['ketersediaan']})" for o in obat_list])
+
+        # --- Jawaban empatik dan rekomendasi ---
+        final_prompt = f"""
+        Pengguna berkata: "{user_input}"
+        Gejala terdeteksi: {gejala}
+        Obat yang cocok:
+        {obat_str}
+
+        Buat balasan yang empatik, menenangkan, dan membantu.
+        Sertakan rekomendasi obat-obatan itu secara alami.
+        Jangan formal seperti dokter, tapi seperti teman UKS yang peduli.
+        """
+        final_response = model.generate_content(final_prompt)
+
+        return jsonify({
+            'gejala_terdeteksi': gejala,
+            'respon': final_response.text
+        })
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# ==============================================================
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)
