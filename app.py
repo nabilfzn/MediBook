@@ -28,14 +28,15 @@ def chatmedi():
     return render_template("chatmedi.html")
 
 @app.route('/')
-def home():
-    return """
-    <h2>Chat Buku & Chat Medis (Gemini)</h2>
-    <ul>
-      <li><a href='/chatbook'>Chat Buku</a></li>
-      <li><a href='/chatmedi'>Chat UKS</a></li>
-    </ul>
-    """
+def index():
+    return render_template("index.html")
+    # return """
+    # <h2>Chat Buku & Chat Medis (Gemini)</h2>
+    # <ul>
+    #   <li><a href='/chatbook'>Chat Buku</a></li>
+    #   <li><a href='/chatmedi'>Chat UKS</a></li>
+    # </ul>
+    # """
 
 
 # ====================== CHAT BUKU =======================
@@ -54,7 +55,7 @@ def chat_book():
         return jsonify({'error': 'pesan tidak boleh kosong'}), 400
 
     try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
+        model = genai.GenerativeModel("gemini-2.5-flash")
 
         # --- Deteksi mood ---
         mood_prompt = f"""
@@ -112,7 +113,7 @@ def chat_medi():
         return jsonify({'error': 'pesan tidak boleh kosong'}), 400
 
     try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
+        model = genai.GenerativeModel("gemini-2.5-flash")
 
         # --- Deteksi gejala utama dari curhatan pengguna ---
         gejala_prompt = f"""

@@ -6,7 +6,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <!-- Typography plugin agar markdown terlihat rapi -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tailwindcss/typography@0.5.9/dist/typography.min.css">
   
   <style>
@@ -27,7 +26,7 @@
     #user-input { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="flex flex-col min-h-screen font-sans">
+<body class="flex flex-col min-h-screen font-sans bg-white text-black">
 
   <!-- Header -->
   <header class="flex justify-between items-center px-10 py-4 bg-[#FFF8F8] border-b border-gray-200">
@@ -40,67 +39,70 @@
 
   <!-- Hero -->
   <section id="hero" class="flex-1 flex flex-col justify-center items-center text-center px-5 py-16">
-    <h1 class="text-4xl md:text-6xl font-bold mb-5 leading-snug">
+    <h1 class="text-6xl md:text-7xl font-bold mb-5 leading-snug">
       Chatbot Cerdas untuk <br/> Pertanyaan Seputar Perpustakaan
     </h1>
     <p class="max-w-4xl text-gray-600 text-lg leading-relaxed">
-      Chatbot Interaktif untuk menjawab semua pertanyaanmu seputar Perpustakaan SMK Telkom Sidoarjo.<br/>
+      Chatbot interaktif untuk menjawab semua pertanyaanmu seputar Perpustakaan SMK Telkom Sidoarjo.<br/>
       Mulai dari cek ketersediaan buku, info jadwal layanan, hingga panduan peminjaman dan pengembalian buku!<br/>
       Yuk, tanya di sini dan nikmati kemudahan mengakses informasi perpustakaan!
     </p>
   </section>
 
-  <!-- Chat -->
-  <div id="chat-container" class="flex-1 flex flex-col items-center px-5 py-5">
+  <!-- Chat Section -->
+  <main id="chat-container" class="flex-1 flex flex-col items-center px-5 pb-8">
     <div class="w-full max-w-3xl flex flex-col flex-1">
-      <div id="chat-box" class="flex-1 rounded-lg px-4 py-5 mb-4 overflow-y-auto space-y-3 hidden max-h-[50vh] bg-transparent relative pl-1 pr-1"></div>
+      <!-- Chat Box -->
+      <div id="chat-box" class="flex-1 rounded-lg p-4 mb-4 overflow-y-auto space-y-3 hidden max-h-[60vh] bg-transparent"></div>
 
-      <div id="input-area" class="flex items-center border border-gray-300 rounded-2xl px-4 py-2 bg-[#FFF8F8] shadow-sm">
+      <!-- Input Area -->
+      <div id="input-area" class="flex items-center rounded-2xl px-4 py-2 bg-[#FFF8F8] shadow-md border border-gray-200">
         <textarea 
           id="user-input"
           placeholder="Tanyakan sesuatu tentang Perpustakaan!"
           rows="1"
           class="flex-1 resize-none border-none outline-none text-base px-2 py-1 leading-tight overflow-y-auto bg-[#FFF8F8]"
         ></textarea>
-        <button id="send-btn" class="text-black text-lg ml-2">➤</button>
+        <button id="send-btn" class="text-black text-xl ml-3 hover:scale-110 transition-transform">➤</button>
       </div>
     </div>
-  </div>
+  </main>
 
   <!-- Footer -->
-  <footer>
-    <div class="bg-[#FFF8F8] grid gap-6 px-10 py-8 md:grid-cols-3 text-sm">
-      <div class="flex flex-col items-start">
+  <footer class="bg-[#FFF8F8] text-black">
+    <div class="grid gap-6 px-10 py-8 md:grid-cols-3 text-sm">
+      <div>
         <img src="{{ url_for('static', filename='img/logo_telkom.png') }}" alt="Logo SMK" class="h-12 mb-3">
-        <b class="mb-2">Sekolah Menengah Kejuruan Telkom Sidoarjo</b>
+        <b>Sekolah Menengah Kejuruan Telkom Sidoarjo</b>
         <p class="mb-3"><b>Alamat:</b> Jl. Raya Pecantingan Sekardangan, Kabupaten Sidoarjo, Jawa Timur</p>
-        <div class="flex gap-3 mt-2">
+        <div class="flex gap-3">
           <a href="https://www.instagram.com/smktelkomsda/">
-            <img src="{{ url_for('static', filename='img/Instagram.png') }}" alt="Instagram" class="h-8 hover:scale-110 transition-transform">
+            <img src="{{ url_for('static', filename='img/Instagram.png') }}" alt="Instagram" class="h-7 hover:scale-110 transition-transform">
           </a>
           <a href="https://www.facebook.com/p/SMK-Telkom-Sidoarjo-100047190761645/">
-            <img src="{{ url_for('static', filename='img/Facebook.png') }}" alt="Facebook" class="h-8 hover:scale-110 transition-transform">
+            <img src="{{ url_for('static', filename='img/Facebook.png') }}" alt="Facebook" class="h-7 hover:scale-110 transition-transform">
           </a>
           <a href="https://www.youtube.com/@smktelkomsidoarjo">
-            <img src="{{ url_for('static', filename='img/Youtube.png') }}" alt="YouTube" class="h-8 hover:scale-110 transition-transform">
+            <img src="{{ url_for('static', filename='img/Youtube.png') }}" alt="YouTube" class="h-7 hover:scale-110 transition-transform">
           </a>
         </div>
       </div>
       <div>
         <h3 class="font-semibold mb-2">Hubungi Kami</h3>
-        <p><a href="tel:031-99711858"><i class="fas fa-phone-alt mr-2"></i>031-99711858</a></p>
-        <p><a href="mailto:informasi@smtktelkom-sda.sch.id"><i class="fas fa-envelope mr-2"></i>informasi@smtktelkom-sda.sch.id</a></p>
+        <p><a href="tel:031-99711858" class="hover:text-blue-600"><i class="fas fa-phone-alt mr-2"></i>031-99711858</a></p>
+        <p><a href="mailto:informasi@smtktelkom-sda.sch.id" class="hover:text-blue-600"><i class="fas fa-envelope mr-2"></i>informasi@smtktelkom-sda.sch.id</a></p>
       </div>
       <div>
         <h3 class="font-semibold mb-2">Tentang Kami</h3>
         <p>Chatbot Perpustakaan ini hadir untuk memudahkan akses informasi, layanan, dan koleksi buku bagi seluruh pengunjung.</p>
       </div>
     </div>
-    <div class="bg-[#FFF8F8] text-center py-3 text-xs">
-      <p>SKOMDA &copy; Copyright 2025. Last Updated. All Rights Reserved</p>
+    <div class="text-center py-3 text-xs border-t border-gray-200">
+      <p>SKOMDA &copy; 2025. All Rights Reserved.</p>
     </div>
   </footer>
 
+  <!-- Script -->
   <script>
     let firstMessage = true;
 
@@ -110,14 +112,14 @@
       const message = inputField.value.trim();
       if (!message) return;
 
-      // Awal chat
+      // Pertama kali kirim pesan
       if (firstMessage) {
         document.getElementById("hero").classList.add("hidden");
         chatBox.classList.remove("hidden");
         firstMessage = false;
       }
 
-      // Tambahkan bubble user
+      // Tambah pesan user
       chatBox.insertAdjacentHTML("beforeend", `
         <div class="flex justify-end">
           <div class="user-bubble text-black px-4 py-3 max-w-[70%] break-words whitespace-pre-wrap">${message}</div>
@@ -126,7 +128,7 @@
       inputField.value = "";
       chatBox.scrollTop = chatBox.scrollHeight;
 
-      // Tambahkan loading sementara bot
+      // Tampilkan "Sedang mengetik..."
       const loadingId = "bot-loading-" + Date.now();
       chatBox.insertAdjacentHTML("beforeend", `
         <div id="${loadingId}" class="flex items-start relative mt-4 ml-14">
@@ -136,7 +138,7 @@
       `);
       chatBox.scrollTop = chatBox.scrollHeight;
 
-      // Kirim ke Flask backend
+      // Kirim ke backend Flask
       try {
         const response = await fetch("/chat", {
           method: "POST",
@@ -146,11 +148,9 @@
 
         const data = await response.json();
         const botText = data.respon || "Maaf, sistem sedang sibuk.";
-
-        // Ubah markdown ke HTML
         const botHTML = marked.parse(botText);
 
-        // Hapus loading & tampilkan balasan bot
+        // Ganti bubble bot
         document.getElementById(loadingId).remove();
         chatBox.insertAdjacentHTML("beforeend", `
           <div class="flex items-start relative mt-4 ml-14">
@@ -164,7 +164,7 @@
         document.getElementById(loadingId).remove();
         chatBox.insertAdjacentHTML("beforeend", `
           <div class="flex items-start relative mt-4 ml-14">
-            <div class="bot-bubble bg-white text-black px-4 py-3 max-w-[85%] break-words whitespace-pre-wrap">
+            <div class="bot-bubble bg-white text-black px-4 py-3 max-w-[85%]">
               Maaf, server sedang tidak bisa diakses.
             </div>
           </div>
@@ -172,7 +172,7 @@
       }
     }
 
-    // Textarea auto height
+    // Textarea auto-height
     const textarea = document.getElementById("user-input");
     const sendBtn = document.getElementById("send-btn");
     const lineHeight = 24, maxRows = 5;
@@ -191,6 +191,7 @@
         sendMessage();
       }
     });
+
     sendBtn.addEventListener("click", sendMessage);
   </script>
 </body>

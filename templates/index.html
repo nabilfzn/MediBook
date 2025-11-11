@@ -1,35 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BookBot Perpustakaan</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot SMK Telkom Sidoarjo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:#fafafa; margin:0; }
-    .wrap { max-width: 800px; margin: 40px auto; background:#fff; border-radius:14px; box-shadow:0 6px 24px rgba(0,0,0,.06); overflow:hidden; }
-    header { padding:18px 20px; border-bottom:1px solid #eee; font-weight:600; }
-    .chat { padding:20px; min-height: 50vh; }
-    .msg { margin:12px 0; line-height:1.5 }
-    .me { text-align:right }
-    .bubble { display:inline-block; padding:10px 14px; border-radius:12px; background:#f1f5f9 }
-    .me .bubble { background:#DCFCE7 }
-    form { display:flex; gap:8px; padding:12px; border-top:1px solid #eee; background:#fff; position:sticky; bottom:0; }
-    input[type=text]{ flex:1; padding:12px 14px; border-radius:10px; border:1px solid #ddd; }
-    button { padding:12px 16px; border-radius:10px; border:0; background:#16a34a; color:#fff; font-weight:600; cursor:pointer }
-    button:disabled { opacity:.6; cursor:not-allowed }
-    .hint { color:#6b7280; font-size:14px; padding:0 20px 14px }
+    body {
+      background: linear-gradient(180deg, #FFF8F8 0%, #FEE2E2 100%);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      transition: all 0.3s ease;
+    }
   </style>
 </head>
-<body>
-  <div class="wrap">
-    <header>📚 BookBot Perpustakaan</header>
-    <div class="hint">Coba: “Aku lagi galau dan butuh bacaan ringan tentang persahabatan.”</div>
-    <div id="chat" class="chat"></div>
-    <form id="form">
-      <input id="inp" type="text" placeholder="Ceritakan apa yang ingin kamu baca & perasaanmu..." autocomplete="off" />
-      <button id="btn" type="submit">Kirim</button>
-    </form>
-  </div>
-  <script src="/static/app.js"></script>
+<body class="flex flex-col min-h-screen font-sans text-gray-800">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center px-10 py-4 bg-[#FFF8F8] border-b border-gray-200 shadow-sm">
+    <img src="{{ url_for('static', filename='img/medibook_logo.png') }}" alt="Logo Bot" class="h-10">
+    <nav>
+      <a href="/chatmedi" class="ml-6 font-medium text-black hover:text-red-600">UKS</a>
+      <a href="/chatbook" class="ml-6 font-medium text-black hover:text-blue-600">Perpustakaan</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="flex-1 flex flex-col justify-center items-center text-center px-5 py-20">
+    <h1 class="text-5xl md:text-6xl font-bold mb-5 leading-snug text-[#B91C1C]">
+      Selamat Datang di Chatbot SMK Telkom Sidoarjo
+    </h1>
+    <p class="max-w-3xl text-gray-600 text-lg mb-10 leading-relaxed">
+      Temukan kemudahan berinteraksi dengan dua asisten cerdas kami — siap menjawab pertanyaanmu tentang
+      <b>UKS</b> dan <b>Perpustakaan</b> sekolah!  
+      Pilih layanan yang ingin kamu gunakan di bawah ini.
+    </p>
+
+    <!-- Cards -->
+    <div class="grid md:grid-cols-2 gap-8 w-full max-w-4xl px-5">
+      
+      <!-- Chatbot UKS -->
+      <a href="/chatmedi" class="card bg-[#B91C1C] text-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all">
+        <div class="p-8 flex flex-col items-center text-center space-y-4">
+          <img src="{{ url_for('static', filename='img/medibook_bot.png') }}" alt="Chatbot UKS" class="h-20 w-20 rounded-full bg-white p-2">
+          <h2 class="text-2xl font-semibold">Chatbot UKS</h2>
+          <p class="text-red-100 leading-relaxed">
+            Tanya seputar UKS — mulai dari ketersediaan obat, informasi kesehatan, hingga penanganan darurat di sekolah.
+          </p>
+          <button class="mt-3 bg-white text-[#B91C1C] font-semibold py-2 px-6 rounded-full hover:bg-red-50 transition-all">
+            Mulai Chat
+          </button>
+        </div>
+      </a>
+
+      <!-- Chatbot Perpustakaan -->
+      <a href="/chatbook" class="card bg-white text-black rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all border border-gray-200">
+        <div class="p-8 flex flex-col items-center text-center space-y-4">
+          <img src="{{ url_for('static', filename='img/medibook_bot.png') }}" alt="Chatbot Perpustakaan" class="h-20 w-20 rounded-full bg-[#FFF8F8] p-2">
+          <h2 class="text-2xl font-semibold">Chatbot Perpustakaan</h2>
+          <p class="text-gray-600 leading-relaxed">
+            Dapatkan informasi lengkap seputar koleksi buku, jadwal layanan, dan panduan peminjaman di perpustakaan.
+          </p>
+          <button class="mt-3 bg-[#FFF8F8] text-black font-semibold py-2 px-6 rounded-full hover:bg-gray-100 transition-all">
+            Mulai Chat
+          </button>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="bg-[#FFF8F8] grid gap-6 px-10 py-8 md:grid-cols-3 text-sm border-t border-gray-200">
+      <div class="flex flex-col items-start">
+        <img src="{{ url_for('static', filename='img/logo_telkom.png') }}" alt="Logo SMK" class="h-12 mb-3">
+        <b class="mb-2">Sekolah Menengah Kejuruan Telkom Sidoarjo</b>
+        <p class="mb-3"><b>Alamat:</b> Jl. Raya Pecantingan Sekardangan, Kabupaten Sidoarjo, Jawa Timur</p>
+        <div class="flex gap-3 mt-2">
+          <a href="https://www.instagram.com/smktelkomsda/">
+            <img src="{{ url_for('static', filename='img/Instagram.png') }}" alt="Instagram" class="h-8 hover:scale-110 transition-transform">
+          </a>
+          <a href="https://www.facebook.com/p/SMK-Telkom-Sidoarjo-100047190761645/">
+            <img src="{{ url_for('static', filename='img/Facebook.png') }}" alt="Facebook" class="h-8 hover:scale-110 transition-transform">
+          </a>
+          <a href="https://www.youtube.com/@smktelkomsidoarjo">
+            <img src="{{ url_for('static', filename='img/Youtube.png') }}" alt="YouTube" class="h-8 hover:scale-110 transition-transform">
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-2">Hubungi Kami</h3>
+        <p><a href="tel:031-99711858"><i class="fas fa-phone-alt mr-2"></i>031-99711858</a></p>
+        <p><a href="mailto:informasi@smtktelkom-sda.sch.id"><i class="fas fa-envelope mr-2"></i>informasi@smtktelkom-sda.sch.id</a></p>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-2">Tentang Kami</h3>
+        <p>Chatbot SMK Telkom Sidoarjo membantu siswa dalam mengakses layanan UKS dan Perpustakaan secara cepat dan efisien.</p>
+      </div>
+    </div>
+    <div class="bg-[#FFF8F8] text-center py-3 text-xs border-t border-gray-200">
+      <p>SKOMDA &copy; 2025. All Rights Reserved.</p>
+    </div>
+  </footer>
 </body>
 </html>
